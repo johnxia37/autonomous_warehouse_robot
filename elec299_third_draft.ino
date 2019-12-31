@@ -40,6 +40,9 @@ int next_R = 0;
 
 Servo grip, tilt, pan;
 
+//instruction arrays//
+
+//magnitude of each action (1 = one square, 2 = two squares)
 int mag[3][54] = {{3,0,2,0,0,1,0,3,0,
               0,1,0,4,0,0,3,0,1,0,0,
               0,1,0,1,0,5,0,0,4,0,1,0,1,0,
@@ -50,7 +53,7 @@ int mag[3][54] = {{3,0,2,0,0,1,0,3,0,
               0,2,0,3,0,0,2,0,2,0,0,
               0,6,0,0,6,0,
               0,5,0,1,0,1,0,0,1,0,5,0,
-              0,5,0,1,0,1,0,0,1,0,5,0,0,0,0,0},
+              0,5,0,1,0,1,0,0,1,0,5,0,0,0,0,0},/
               
               {1,0,4,0,0,3,0,1,0,
               0,3,0,2,0,0,1,0,3,0,0,
@@ -58,6 +61,7 @@ int mag[3][54] = {{3,0,2,0,0,1,0,3,0,
               0,5,0,2,0,0,1,0,5,0,
               0,4,0,2,0,0,1,0,4,0}};
 
+//type of action (f = forward, l = turn left)
 char act[3][54] = {{'f','l','f','p','s','f','r','f','d',
                's','f','r','f','p','s','f','l','f','d','t',
                's','f','l','f','r','f','p','s','f','l','f','r','f','d',
@@ -76,13 +80,16 @@ char act[3][54] = {{'f','l','f','p','s','f','r','f','d',
                's','f','r','f','p','s','f','l','f','d',
                's','f','r','f','p','s','f','l','f','d'}};
 
+//---instruction arrays---//
+
 void setup() {
   prev_L = digitalRead(Lencoder);
   prev_R = digitalRead(Rencoder);
-
+  
   grip.attach(10);
   tilt.attach(9);
   pan.attach(8);
+  //set servo gripper to default position  
   grip.write(40);
   tilt.write(165);
   pan.write(70);
@@ -101,20 +108,23 @@ void setup() {
   
 }
 
+//default beacon value
 int val = -1;
  
 void loop()
 {
 
-
+//determine starting location from IR beacon
 int location = getlocation();
 
 /*
+//manual push start
 while(digitalRead(Lbumper)==1)
 {}
 val = 2;
 */
   
+  //loop through instruction arrays
   for ( int i=0;i<54;i++)
   {
     char alpha = act[char(val)][i];    
@@ -229,6 +239,9 @@ void spin()
   
 }
 
+//found that reading a single sensor 
+//worked more reliable than reading
+//multiple ones within the same iteration
 void encoder(int turns)
 {
   int wheelCountL = 0;
